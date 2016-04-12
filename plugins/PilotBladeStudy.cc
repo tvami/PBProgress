@@ -415,63 +415,10 @@ void PilotBladeStudy::endRun(edm::Run const& iRun, edm::EventSetup const& iSetup
   }
   runTree_->Fill();
 }
-
-// ------------------------ beginLuminosityBlock ------------------------------
-void PilotBladeStudy::beginLuminosityBlock(edm::LuminosityBlock const& iLumi, edm::EventSetup const& iSetup){
-  isNewLS_ = true;
-  
-  assert(lumi_.run==NOVAL_I);
-  assert(lumi_.ls==NOVAL_I);
-}
-
-// -------------------------- endLuminosityBlock ------------------------------
-void PilotBladeStudy::endLuminosityBlock(edm::LuminosityBlock const& iLumi, edm::EventSetup const& iSetup){
-  
-  edm::Handle<LumiSummary> lumi;
-  iLumi.getByToken(lumiSummaryToken_, lumi);
-  if (!lumi.isValid()) {
-    std::cout<<" LumiSummary info is NOT available " << std::endl;
-    lumi_.init();
-  } else {
-    lumi_.init(); // temporal values deleted, now we fill it for real
-    lumi_.intlumi=lumi->intgRecLumi();
-    lumi_.instlumi=lumi->avgInsDelLumi();
-  }
-  
-  // ConditionsInLumiBlock
-  edm::Handle<edm::ConditionsInLumiBlock> cond;
-  iLumi.getByToken(condInLumiBlockToken_, cond);
-  if (!cond.isValid()) {
-    std::cout<<"ConditionsInLumiBlock info is NOT available" << std::endl;
-    return;
-  }
-  
-  lumi_.fill = run_.fill;
-  lumi_.run  = iLumi.run();
-  lumi_.ls   = iLumi.luminosityBlock();
-  lumi_.time = iLumi.beginTime().unixTime();
-  
-  // InstLumi in units of ub-1s-1
-  std::cout << "New lumi block: Run " << lumi_.run << " LS = " << lumi_.ls;
-  std::cout << " inst lumi " << lumi_.instlumi << " int lumi " << lumi_.intlumi <<std::endl;
-  lumiTree_->Fill();
-  // make sure that the beginLuminosityBlock can check that we were called:
-  lumi_.init();
-}
-
 // -------------------------------- analyze -----------------------------------
 void PilotBladeStudy::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
   bool DEBUG = false;
   if (DEBUG) std::cout << "Processing the event " << std::endl;
-  //beginLuminosityBlock
-  if (isNewLS_==true) { // beginLuminosityBlock() was just called
-    lumi_.run=iEvent.id().run();
-    lumi_.ls=iEvent.luminosityBlock();
-    isNewLS_=false;
-  } else {
-    assert(lumi_.run == int(iEvent.id().run()));
-    assert(lumi_.ls == int(iEvent.luminosityBlock()));
-  }
   
   init_all();
   
