@@ -40,7 +40,7 @@
   <use   name="TrackingTools/MeasurementDet"/>
   <use   name="FWCore/Utilities"/>
   <use   name="DataFormats/Luminosity"/>
-  <library   file="*.cc" name="DPGAnalysisPilotBladeStudyPlugin">
+  <library   file="*.cc" name="DPGAnalysisPBProgressPlugin">
     <flags   EDM_PLUGIN="1"/>
   </library>
 </environment>
