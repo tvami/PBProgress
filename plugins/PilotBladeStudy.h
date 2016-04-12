@@ -8,9 +8,6 @@
  ************************************************************/
 
 // ----------------------------------------------------------------------------------------
-// CMSSW Version:
-#define CMSSW_VER 75
-
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 
 #include "FWCore/Framework/interface/Event.h"
